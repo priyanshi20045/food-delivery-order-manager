@@ -2,6 +2,9 @@ import { useState } from "react";
 import { addOrder } from "../services/orderService";
 
 function OrderForm() {
+
+  const [loading, setLoading] = useState(false);
+
   const [order, setOrder] = useState({
     restaurantName: "",
     itemCount: "",
@@ -18,105 +21,129 @@ function OrderForm() {
     });
   };
 
- const handleSubmit = async (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
 
-        await addOrder(order);
+      setLoading(true);
 
-        alert("Order Added Successfully");
+      await addOrder(order);
 
-        setOrder({
-            restaurantName: "",
-            itemCount: "",
-            isPaid: false,
-            deliveryDistance: ""
-        });
+      alert("Order Added Successfully");
+
+      setOrder({
+        restaurantName: "",
+        itemCount: "",
+        isPaid: false,
+        deliveryDistance: ""
+      });
 
     } catch (error) {
 
-        console.error(error);
-        alert("Error adding order");
+      console.error(error);
+      alert("Error adding order");
+
+    } finally {
+
+      setLoading(false);
 
     }
-};
+  };
+
 
   return (
     <div>
       <h2>Add Order</h2>
 
-<form className="order-form" onSubmit={handleSubmit}>
+      <form className="order-form" onSubmit={handleSubmit}>
 
-  <div className="form-group">
-    <label>Restaurant Name</label>
-    <input
-      type="text"
-      name="restaurantName"
-      placeholder="e.g. Domino's"
-      value={order.restaurantName}
-      onChange={handleChange}
-      required
-    />
-  </div>
+        <div className="form-group">
+          <label>Restaurant Name</label>
+          <input
+            type="text"
+            name="restaurantName"
+            placeholder="e.g. Domino's"
+            value={order.restaurantName}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-  <div className="form-group">
-    <label>Number of Items</label>
-    <input
-      type="number"
-      name="itemCount"
-      placeholder="e.g. 2"
-      value={order.itemCount}
-      onChange={handleChange}
-      required
-    />
-  </div>
 
-  <div className="form-group">
-    <label>Delivery Distance (km)</label>
-    <input
-      type="number"
-      step="0.1"
-      name="deliveryDistance"
-      placeholder="e.g. 4.5"
-      value={order.deliveryDistance}
-      onChange={handleChange}
-      required
-    />
-  </div>
+        <div className="form-group">
+          <label>Number of Items</label>
+          <input
+            type="number"
+            name="itemCount"
+            placeholder="e.g. 2"
+            value={order.itemCount}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-  <div className="form-group">
-    <label>Payment Status</label>
 
-    <div className="radio-group">
+        <div className="form-group">
+          <label>Delivery Distance (km)</label>
+          <input
+            type="number"
+            step="0.1"
+            name="deliveryDistance"
+            placeholder="e.g. 4.5"
+            value={order.deliveryDistance}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-      <label>
-        <input
-          type="radio"
-          name="isPaid"
-          checked={!order.isPaid}
-          onChange={() => setOrder({ ...order, isPaid: false })}
-        />
-        Unpaid
-      </label>
 
-      <label>
-        <input
-          type="radio"
-          name="isPaid"
-          checked={order.isPaid}
-          onChange={() => setOrder({ ...order, isPaid: true })}
-        />
-        Paid
-      </label>
+        <div className="form-group">
+          <label>Payment Status</label>
 
-    </div>
+          <div className="radio-group">
 
-  </div>
+            <label>
+              <input
+                type="radio"
+                name="isPaid"
+                checked={!order.isPaid}
+                onChange={() =>
+                  setOrder({
+                    ...order,
+                    isPaid: false
+                  })
+                }
+              />
+              Unpaid
+            </label>
 
-  <button type="submit">
-    Create Order
-  </button>
+
+            <label>
+              <input
+                type="radio"
+                name="isPaid"
+                checked={order.isPaid}
+                onChange={() =>
+                  setOrder({
+                    ...order,
+                    isPaid: true
+                  })
+                }
+              />
+              Paid
+            </label>
+
+          </div>
+        </div>
+
+
+        <button type="submit" disabled={loading}>
+          {loading ? "Creating..." : "Create Order"}
+        </button>
+
+
       </form>
     </div>
   );
