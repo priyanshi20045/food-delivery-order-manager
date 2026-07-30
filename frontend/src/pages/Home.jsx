@@ -1,6 +1,5 @@
 import { useState } from "react";
 import deliveryImage from "../food.png";
-
 import Navbar from "../components/Navbar";
 import OrderForm from "../components/OrderForm";
 import OrdersTable from "../components/OrdersTable";
